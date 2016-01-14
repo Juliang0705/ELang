@@ -113,6 +113,17 @@ class Print implements Statement{
     }
 }
 
+class Println implements Statement{
+    private Expression expr;
+    public Println(Expression e){
+        this.expr = e;
+    }
+    @Override
+    public void execute(Memory mem) throws Exception {
+        System.out.println(this.expr.evaluate(mem));
+    }
+}
+
 class Return implements Statement{
     private Expression expr;
     public Return(Expression e){

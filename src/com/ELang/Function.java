@@ -5,11 +5,16 @@ package com.ELang;
  */
 import java.util.*;
 
-class Function {
-    private String name;
-    private List<String> variables;
-    private List<Statement> stmts;
-    private Memory mem;
+interface Callable{
+    String getName();
+    Value apply(List<Value> values) throws Exception;
+}
+
+class Function implements Callable {
+    protected String name;
+    protected List<String> variables;
+    protected List<Statement> stmts;
+    protected Memory mem;
     public Function(String functionName, List<String> parameters, List<Statement> todo, Memory m) throws Exception{
         this.name = functionName;
         this.variables = parameters;
@@ -38,6 +43,6 @@ class Function {
         if (this.mem.hasReturnedValue())
             return this.mem.getReturnedValue();
         else
-            throw new Exception("Function \""  + this.name +"\" may not have a return value.");
+            throw new Exception("Function \""  + this.name +"\" may not return.");
     }
 }

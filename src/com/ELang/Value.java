@@ -4,6 +4,9 @@ package com.ELang;
  * Created by Juliang on 1/12/16.
  */
 import java.util.*;
+enum ValueType{
+    NUMBER,STRING,BOOL,ARRAY
+}
 public class Value {
     public static Value array(int n){
         return new Value(n,true);
@@ -12,11 +15,21 @@ public class Value {
         return new Value(o);
     }
     private Object v;
+    private ValueType type;
     public Value(Object o){
         this.v = o;
+        if (this.v instanceof Number)
+            this.type = ValueType.NUMBER;
+        else if (this.v instanceof String)
+            this.type = ValueType.STRING;
+        else if (this.v instanceof Boolean)
+            this.type = ValueType.BOOL;
+        else if (this.v instanceof Value[])
+            this.type = ValueType.ARRAY;
     }
     private Value(int n,boolean isArray){
         this.v = new Value[n];
+        this.type = ValueType.ARRAY;
     }
     public Number getNumber() {
         return (Number) v;
@@ -28,9 +41,10 @@ public class Value {
         return (Boolean) v;
     }
     public Value[] getArray() { return (Value[]) v;}
+    public ValueType getType(){return this.type;}
     @Override
     public String toString(){
-        if (this.v instanceof Value[]){
+        if (this.type == ValueType.ARRAY){
             Value[] array = (Value[]) this.v;
             String result = "[";
             for (Value val: array){

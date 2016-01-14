@@ -8,7 +8,7 @@ import java.util.*;
 public class Memory {
     private static Memory ourInstance = new Memory();
     private LinkedList<HashMap<String,Value>> valueMemory;
-    private HashMap<String,Function> functionMemory;
+    private HashMap<String,Callable> functionMemory;
     private Value returnedValue;
     public static Memory getInstance() {
         return ourInstance;
@@ -93,7 +93,7 @@ public class Memory {
      * @param f the function to be added
      * @throws Exception if function is already defined
      */
-    public void addFunction(Function f) throws Exception{
+    public void addFunction(Callable f) throws Exception{
         if (this.functionMemory.containsKey(f.getName()))
             throw new Exception("Function: \"" + f.getName() + "\" has multiply definitions.");
         this.functionMemory.put(f.getName(),f);
@@ -105,7 +105,7 @@ public class Memory {
      * @return a function object
      * @throws Exception if function is not defined
      */
-    public Function getFunction(String functionName) throws Exception{
+    public Callable getFunction(String functionName) throws Exception{
         if (!this.functionMemory.containsKey(functionName))
             throw new Exception("Function: \"" + functionName + "\" is not defined.");
         return this.functionMemory.get(functionName);

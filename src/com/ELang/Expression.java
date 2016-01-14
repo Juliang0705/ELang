@@ -234,8 +234,10 @@ class ApplyFunction implements Expression{
     @Override
     public Value evaluate(Memory mem) throws Exception {
         List<Value> valueList = new ArrayList<>();
-        for (Expression e: this.args)
-            valueList.add(e.evaluate(mem));
+        if (this.args != null) {
+            for (Expression e : this.args)
+                valueList.add(e.evaluate(mem));
+        }
         return mem.getFunction(this.name).apply(valueList);
     }
 }
