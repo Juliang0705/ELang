@@ -22,8 +22,8 @@ class Function {
     }
     public Value apply(List<Value> values) throws Exception{
         if (values.size() != this.variables.size())
-            throw new Exception("Function \"" + this.name +"\" expects " + this.variables.size() + "arguments." +
-                                "Found " + values.size() + " arguments.");
+            throw new Exception("Function \"" + this.name +"\" expects " + this.variables.size() + " argument(s). " +
+                                "Found " + values.size() + " argument(s).");
         this.mem.pushScope();
         Iterator<String> nameIt = this.variables.iterator();
         Iterator<Value> valueIt= values.iterator();

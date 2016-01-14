@@ -3,8 +3,6 @@ package com.ELang;
 /**
  * Created by Juliang on 1/13/16.
  */
-import com.sun.corba.se.spi.orbutil.fsm.State;
-
 import java.util.*;
 
 interface Statement {
@@ -34,6 +32,20 @@ class Assignment implements Statement{
     @Override
     public void execute(Memory mem) throws Exception {
         mem.updateValue(this.name,this.expr.evaluate(mem));
+    }
+}
+class ArrayAssign implements Statement{
+    private Variable arrayName;
+    private Expression pos;
+    private Expression value;
+    public ArrayAssign(Variable name, Expression position, Expression newValue){
+        this.arrayName = name;
+        this.pos = position;
+        this.value = newValue;
+    }
+    @Override
+    public void execute(Memory mem) throws Exception {
+        this.arrayName.evaluate(mem).getArray()[this.pos.evaluate(mem).getNumber().intValue()] = this.value.evaluate(mem);
     }
 }
 class Empty implements Statement{

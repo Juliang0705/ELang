@@ -30,6 +30,18 @@ class Variable implements Expression{
         return mem.lookUp(this.varName);
     }
 }
+class ArrayElement implements Expression{
+    private Expression pos;
+    private Variable arrayName;
+    public ArrayElement(Variable name, Expression position){
+        this.arrayName = name;
+        this.pos = position;
+    }
+    @Override
+    public Value evaluate(Memory mem) throws Exception {
+        return this.arrayName.evaluate(mem).getArray()[this.pos.evaluate(mem).getNumber().intValue()];
+    }
+}
 
 class Plus implements Expression{
     private Expression left,right;

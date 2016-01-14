@@ -14,7 +14,15 @@ public class Main {
                         )
                                     ),mem);
             Block prog = new Block(Arrays.asList(
-                         new Print(new ApplyFunction("fac",Arrays.asList(new Literal(new Value(5)))))
+                         new Print(new ApplyFunction("fac",Arrays.asList(new Literal(new Value(5))))),
+                         new VariableDeclaration("arr",new Literal(Value.array(5))),
+                         new ArrayAssign(new Variable("arr"),new Literal(Value.value(0)),new Literal(Value.value(100))),
+                    new ArrayAssign(new Variable("arr"),new Literal(Value.value(1)),new Literal(Value.value(101))),
+                    new ArrayAssign(new Variable("arr"),new Literal(Value.value(2)),new Literal(Value.value(102))),
+                    new ArrayAssign(new Variable("arr"),new Literal(Value.value(3)),new Literal(Value.value(103))),
+                    new ArrayAssign(new Variable("arr"),new Literal(Value.value(4)),new Literal(Value.value(104))),
+                    new Print(new Literal(Value.value("\n"))),
+                    new Print(new Variable("arr"))
                          ));
             prog.execute(mem);
         }catch (Exception err){
