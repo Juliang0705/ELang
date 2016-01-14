@@ -3,6 +3,8 @@ package com.ELang;
 /**
  * Created by Juliang on 1/12/16.
  */
+import java.util.*;
+
 interface Expression {
     Value evaluate(Memory mem) throws Exception;
 }
@@ -40,5 +42,188 @@ class Plus implements Expression{
         Number l = this.left.evaluate(mem).getNumber();
         Number r = this.right.evaluate(mem).getNumber();
         return new Value(l.doubleValue() + r.doubleValue());
+    }
+}
+
+class Minus implements Expression{
+    private Expression left,right;
+    public Minus(Expression left, Expression right){
+        this.left = left;
+        this.right = right;
+    }
+    @Override
+    public Value evaluate(Memory mem) throws Exception {
+        Number l = this.left.evaluate(mem).getNumber();
+        Number r = this.right.evaluate(mem).getNumber();
+        return new Value(l.doubleValue() - r.doubleValue());
+    }
+}
+
+
+class Multiply implements Expression{
+    private Expression left,right;
+    public Multiply(Expression left, Expression right){
+        this.left = left;
+        this.right = right;
+    }
+    @Override
+    public Value evaluate(Memory mem) throws Exception {
+        Number l = this.left.evaluate(mem).getNumber();
+        Number r = this.right.evaluate(mem).getNumber();
+        return new Value(l.doubleValue() * r.doubleValue());
+    }
+}
+
+
+class Divide implements Expression{
+    private Expression left,right;
+    public Divide(Expression left, Expression right){
+        this.left = left;
+        this.right = right;
+    }
+    @Override
+    public Value evaluate(Memory mem) throws Exception {
+        Number l = this.left.evaluate(mem).getNumber();
+        Number r = this.right.evaluate(mem).getNumber();
+        return new Value(l.doubleValue() / r.doubleValue());
+    }
+}
+
+class Equal implements Expression{
+    private Expression left,right;
+    public Equal(Expression left, Expression right){
+        this.left = left;
+        this.right = right;
+    }
+    @Override
+    public Value evaluate(Memory mem) throws Exception {
+        Number l = this.left.evaluate(mem).getNumber();
+        Number r = this.right.evaluate(mem).getNumber();
+        return new Value(l.doubleValue() == r.doubleValue());
+    }
+}
+
+class NotEqual implements Expression{
+    private Expression left,right;
+    public NotEqual(Expression left, Expression right){
+        this.left = left;
+        this.right = right;
+    }
+    @Override
+    public Value evaluate(Memory mem) throws Exception {
+        Number l = this.left.evaluate(mem).getNumber();
+        Number r = this.right.evaluate(mem).getNumber();
+        return new Value(l.doubleValue() != r.doubleValue());
+    }
+}
+
+class Greater implements Expression{
+    private Expression left,right;
+    public Greater(Expression left, Expression right){
+        this.left = left;
+        this.right = right;
+    }
+    @Override
+    public Value evaluate(Memory mem) throws Exception {
+        Number l = this.left.evaluate(mem).getNumber();
+        Number r = this.right.evaluate(mem).getNumber();
+        return new Value(l.doubleValue() > r.doubleValue());
+    }
+}
+
+class GreaterEqual implements Expression{
+    private Expression left,right;
+    public GreaterEqual(Expression left, Expression right){
+        this.left = left;
+        this.right = right;
+    }
+    @Override
+    public Value evaluate(Memory mem) throws Exception {
+        Number l = this.left.evaluate(mem).getNumber();
+        Number r = this.right.evaluate(mem).getNumber();
+        return new Value(l.doubleValue() >= r.doubleValue());
+    }
+}
+
+class Less implements Expression{
+    private Expression left,right;
+    public Less(Expression left, Expression right){
+        this.left = left;
+        this.right = right;
+    }
+    @Override
+    public Value evaluate(Memory mem) throws Exception {
+        Number l = this.left.evaluate(mem).getNumber();
+        Number r = this.right.evaluate(mem).getNumber();
+        return new Value(l.doubleValue() < r.doubleValue());
+    }
+}
+
+class LessEqual implements Expression{
+    private Expression left,right;
+    public LessEqual(Expression left, Expression right){
+        this.left = left;
+        this.right = right;
+    }
+    @Override
+    public Value evaluate(Memory mem) throws Exception {
+        Number l = this.left.evaluate(mem).getNumber();
+        Number r = this.right.evaluate(mem).getNumber();
+        return new Value(l.doubleValue() <= r.doubleValue());
+    }
+}
+
+class And implements Expression{
+    private Expression left,right;
+    public And(Expression left, Expression right){
+        this.left = left;
+        this.right = right;
+    }
+    @Override
+    public Value evaluate(Memory mem) throws Exception {
+        Boolean l = this.left.evaluate(mem).getBool();
+        Boolean r = this.right.evaluate(mem).getBool();
+        return new Value(l.booleanValue() && r.booleanValue());
+    }
+}
+
+class Or implements Expression{
+    private Expression left,right;
+    public Or(Expression left, Expression right){
+        this.left = left;
+        this.right = right;
+    }
+    @Override
+    public Value evaluate(Memory mem) throws Exception {
+        Boolean l = this.left.evaluate(mem).getBool();
+        Boolean r = this.right.evaluate(mem).getBool();
+        return new Value(l.booleanValue() || r.booleanValue());
+    }
+}
+
+class Not implements Expression{
+    private Expression expr;
+    public Not(Expression left, Expression right){
+        this.expr = left;
+    }
+    @Override
+    public Value evaluate(Memory mem) throws Exception {
+        Boolean l = this.expr.evaluate(mem).getBool();
+        return new Value(!l.booleanValue());
+    }
+}
+class ApplyFunction implements Expression{
+    private String name;
+    private List<Expression> args;
+    public ApplyFunction(String functionName, List<Expression> arguments){
+        this.name = functionName;
+        this.args = arguments;
+    }
+    @Override
+    public Value evaluate(Memory mem) throws Exception {
+        List<Value> valueList = new ArrayList<>();
+        for (Expression e: this.args)
+            valueList.add(e.evaluate(mem));
+        return mem.getFunction(this.name).apply(valueList);
     }
 }

@@ -1,21 +1,22 @@
 package com.ELang;
+import java.util.*;
 
 public class Main {
 
     public static void main(String[] args) {
         try {
             Memory mem = Memory.getInstance();
-            mem.pushScope();
-            VariableDeclaration dec1 = new VariableDeclaration("var1",
-                                            new Plus(new Literal(new Value(20)),new Literal(new Value(20))));
-            dec1.execute(mem);
-            VariableDeclaration dec2 = new VariableDeclaration("var2",
-                                            new Plus(new Variable("var1"),new Literal(new Value(10))));
-            dec2.execute(mem);
-            Assignment ass1 = new Assignment("var1",new Variable("var2"));
-            ass1.execute(mem);
-            System.out.println(new Variable("var1").evaluate(mem));
-            mem.popScope();
+            Function addTwice = new Function("fac", Arrays.asList("n"),
+                                    Arrays.asList(
+                new If(new Greater(new Variable("n"),new Literal(new Value(1))),
+                        new Return(new Multiply(new Variable("n"),new ApplyFunction("fac",Arrays.asList(new Minus(new Variable("n"),new Literal(new Value(1))))))),
+                        new Return(new Literal(new Value(1)))
+                        )
+                                    ),mem);
+            Block prog = new Block(Arrays.asList(
+                         new Print(new ApplyFunction("fac",Arrays.asList(new Literal(new Value(5)))))
+                         ));
+            prog.execute(mem);
         }catch (Exception err){
             System.out.println(err);
         }
