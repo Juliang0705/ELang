@@ -5,12 +5,12 @@ package com.ELang;
  */
 import java.util.*;
 
-interface Callable{
+interface Callable extends Statement{
     String getName();
     Value apply(List<Value> values) throws Exception;
 }
 
-class Function implements Callable {
+class Function implements Callable{
     protected String name;
     protected List<String> variables;
     protected List<Statement> stmts;
@@ -20,7 +20,6 @@ class Function implements Callable {
         this.variables = parameters;
         this.stmts = todo;
         this.mem = m;
-        this.mem.addFunction(this);
     }
     public String getName(){
         return this.name;
@@ -44,5 +43,10 @@ class Function implements Callable {
             return this.mem.getReturnedValue();
         else
             throw new Exception("Function \""  + this.name +"\" may not return.");
+    }
+
+    @Override
+    public void execute(Memory mem) throws Exception {
+        mem.addFunction(this);
     }
 }

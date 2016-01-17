@@ -5,7 +5,7 @@ package com.ELang;
  */
 import java.util.*;
 enum ValueType{
-    NUMBER,STRING,BOOL,ARRAY
+    NUMBER,STRING,BOOL,ARRAY,NONE
 }
 public class Value {
     public static Value array(int n){
@@ -16,7 +16,7 @@ public class Value {
     }
     private Object v;
     private ValueType type;
-    public Value(Object o){
+    private Value(Object o){
         this.v = o;
         if (this.v instanceof Number)
             this.type = ValueType.NUMBER;
@@ -26,6 +26,8 @@ public class Value {
             this.type = ValueType.BOOL;
         else if (this.v instanceof Value[])
             this.type = ValueType.ARRAY;
+        else if (this.v == null)
+            this.type = ValueType.NONE;
     }
     private Value(int n,boolean isArray){
         this.v = new Value[n];
@@ -58,7 +60,13 @@ public class Value {
             else
                 result = result.substring(0,result.length()-1) + "]";
             return result;
+        }else if (this.type == ValueType.NONE){
+            return "NONE";
         }
         return v.toString();
+    }
+    @Override
+    public boolean equals(Object other){
+        return this.v.equals(other);
     }
 }

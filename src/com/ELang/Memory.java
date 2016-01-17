@@ -46,6 +46,7 @@ public class Memory {
 
     /**
      * update the value of variable in current scope
+     * if value has not been declared before, declare the variable.
      * @param identifier variable name
      * @param v new variable value
      * @throws Exception if variable is not defined in memory
@@ -60,7 +61,8 @@ public class Memory {
             }
         }
         if (!hasUpdated)
-            throw new Exception("Identifier: \"" + identifier +"\" is not defined.");
+            addToCurrentScope(identifier,v);
+            //throw new Exception("Identifier: \"" + identifier +"\" is not defined.");
     }
 
     /**

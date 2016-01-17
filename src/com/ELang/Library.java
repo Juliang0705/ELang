@@ -14,11 +14,6 @@ import java.util.List;
  */
 class Input implements Callable{
     public Input() {
-        try {
-            Memory.getInstance().addFunction(this);
-        }catch(Exception e){
-            System.out.println(e);
-        }
     }
     @Override
     public String getName() {
@@ -27,19 +22,23 @@ class Input implements Callable{
 
     @Override
     public Value apply(List<Value> values) throws Exception {
+        if (values.size() != 1)
+            throw new Exception("Function \"" + this.getName() +"\" expects 1 argument. " +
+                    "Found " + values.size() + " argument(s).");
+        String prompt = values.get(0).getString();
+        System.out.print(prompt);
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         String str = br.readLine();
-        return new Value(str);
+        return Value.value(str);
+    }
+    @Override
+    public void execute(Memory mem) throws Exception {
+        mem.addFunction(this);
     }
 }
 
 class ToInt implements Callable{
     public ToInt(){
-        try {
-            Memory.getInstance().addFunction(this);
-        }catch(Exception e){
-            System.out.println(e);
-        }
     }
     @Override
     public String getName() {
@@ -56,9 +55,9 @@ class ToInt implements Callable{
             case ARRAY:
                 Value[] array = oldValue.getArray();
                 for (int i = 0; i < array.length; ++i){
-                    array[i] = new Value(convertToInt(array[i]));
+                    array[i] = Value.value(convertToInt(array[i]));
                 }
-                return new Value(array);
+                return Value.value(array);
             default:
                 return convertToInt(oldValue);
 
@@ -67,13 +66,17 @@ class ToInt implements Callable{
     private Value convertToInt(Value v) throws Exception{
         switch (v.getType()) {
             case NUMBER:
-                return new Value(v.getNumber().intValue());
+                return Value.value(v.getNumber().intValue());
             case STRING:
-                return new Value(Integer.parseInt(v.getString()));
+                return Value.value(Integer.parseInt(v.getString()));
             case BOOL:
-                return new Value(v.getBool() ? 1 : 0);
+                return Value.value(v.getBool() ? 1 : 0);
             default:
-                throw new Exception("Impossible");
+                throw new Exception("ToInt Failed: unsupported type" + v.getType());
         }
+    }
+    @Override
+    public void execute(Memory mem) throws Exception {
+        mem.addFunction(this);
     }
 }

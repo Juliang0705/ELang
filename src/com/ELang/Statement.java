@@ -9,19 +9,6 @@ interface Statement {
     void execute(Memory mem) throws Exception;
 }
 
-class VariableDeclaration implements Statement{
-    private String name;
-    private Expression expr;
-    public VariableDeclaration(String identifier,Expression e){
-        this.name = identifier;
-        this.expr = e;
-    }
-    @Override
-    public void execute(Memory mem) throws Exception {
-        mem.addToCurrentScope(this.name,this.expr.evaluate(mem));
-    }
-}
-
 class Assignment implements Statement{
     private String name;
     private Expression expr;
@@ -38,8 +25,8 @@ class ArrayAssign implements Statement{
     private Variable arrayName;
     private Expression pos;
     private Expression value;
-    public ArrayAssign(Variable name, Expression position, Expression newValue){
-        this.arrayName = name;
+    public ArrayAssign(String name, Expression position, Expression newValue){
+        this.arrayName = new Variable(name);
         this.pos = position;
         this.value = newValue;
     }

@@ -33,8 +33,8 @@ class Variable implements Expression{
 class ArrayElement implements Expression{
     private Expression pos;
     private Variable arrayName;
-    public ArrayElement(Variable name, Expression position){
-        this.arrayName = name;
+    public ArrayElement(String name, Expression position){
+        this.arrayName = new Variable(name);
         this.pos = position;
     }
     @Override
@@ -53,7 +53,7 @@ class Plus implements Expression{
     public Value evaluate(Memory mem) throws Exception {
         Number l = this.left.evaluate(mem).getNumber();
         Number r = this.right.evaluate(mem).getNumber();
-        return new Value(l.doubleValue() + r.doubleValue());
+        return Value.value(l.doubleValue() + r.doubleValue());
     }
 }
 
@@ -67,7 +67,7 @@ class Minus implements Expression{
     public Value evaluate(Memory mem) throws Exception {
         Number l = this.left.evaluate(mem).getNumber();
         Number r = this.right.evaluate(mem).getNumber();
-        return new Value(l.doubleValue() - r.doubleValue());
+        return Value.value(l.doubleValue() - r.doubleValue());
     }
 }
 
@@ -82,7 +82,7 @@ class Multiply implements Expression{
     public Value evaluate(Memory mem) throws Exception {
         Number l = this.left.evaluate(mem).getNumber();
         Number r = this.right.evaluate(mem).getNumber();
-        return new Value(l.doubleValue() * r.doubleValue());
+        return Value.value(l.doubleValue() * r.doubleValue());
     }
 }
 
@@ -97,7 +97,7 @@ class Divide implements Expression{
     public Value evaluate(Memory mem) throws Exception {
         Number l = this.left.evaluate(mem).getNumber();
         Number r = this.right.evaluate(mem).getNumber();
-        return new Value(l.doubleValue() / r.doubleValue());
+        return Value.value(l.doubleValue() / r.doubleValue());
     }
 }
 
@@ -109,9 +109,9 @@ class Equal implements Expression{
     }
     @Override
     public Value evaluate(Memory mem) throws Exception {
-        Number l = this.left.evaluate(mem).getNumber();
-        Number r = this.right.evaluate(mem).getNumber();
-        return new Value(l.doubleValue() == r.doubleValue());
+        Value l = this.left.evaluate(mem);
+        Value r = this.right.evaluate(mem);
+        return Value.value(l.equals(r));
     }
 }
 
@@ -123,9 +123,9 @@ class NotEqual implements Expression{
     }
     @Override
     public Value evaluate(Memory mem) throws Exception {
-        Number l = this.left.evaluate(mem).getNumber();
-        Number r = this.right.evaluate(mem).getNumber();
-        return new Value(l.doubleValue() != r.doubleValue());
+        Value l = this.left.evaluate(mem);
+        Value r = this.right.evaluate(mem);
+        return Value.value(!l.equals(r));
     }
 }
 
@@ -139,7 +139,7 @@ class Greater implements Expression{
     public Value evaluate(Memory mem) throws Exception {
         Number l = this.left.evaluate(mem).getNumber();
         Number r = this.right.evaluate(mem).getNumber();
-        return new Value(l.doubleValue() > r.doubleValue());
+        return Value.value(l.doubleValue() > r.doubleValue());
     }
 }
 
@@ -153,7 +153,7 @@ class GreaterEqual implements Expression{
     public Value evaluate(Memory mem) throws Exception {
         Number l = this.left.evaluate(mem).getNumber();
         Number r = this.right.evaluate(mem).getNumber();
-        return new Value(l.doubleValue() >= r.doubleValue());
+        return Value.value(l.doubleValue() >= r.doubleValue());
     }
 }
 
@@ -167,7 +167,7 @@ class Less implements Expression{
     public Value evaluate(Memory mem) throws Exception {
         Number l = this.left.evaluate(mem).getNumber();
         Number r = this.right.evaluate(mem).getNumber();
-        return new Value(l.doubleValue() < r.doubleValue());
+        return Value.value(l.doubleValue() < r.doubleValue());
     }
 }
 
@@ -181,7 +181,7 @@ class LessEqual implements Expression{
     public Value evaluate(Memory mem) throws Exception {
         Number l = this.left.evaluate(mem).getNumber();
         Number r = this.right.evaluate(mem).getNumber();
-        return new Value(l.doubleValue() <= r.doubleValue());
+        return Value.value(l.doubleValue() <= r.doubleValue());
     }
 }
 
@@ -195,7 +195,7 @@ class And implements Expression{
     public Value evaluate(Memory mem) throws Exception {
         Boolean l = this.left.evaluate(mem).getBool();
         Boolean r = this.right.evaluate(mem).getBool();
-        return new Value(l.booleanValue() && r.booleanValue());
+        return Value.value(l.booleanValue() && r.booleanValue());
     }
 }
 
@@ -209,7 +209,7 @@ class Or implements Expression{
     public Value evaluate(Memory mem) throws Exception {
         Boolean l = this.left.evaluate(mem).getBool();
         Boolean r = this.right.evaluate(mem).getBool();
-        return new Value(l.booleanValue() || r.booleanValue());
+        return Value.value(l.booleanValue() || r.booleanValue());
     }
 }
 
@@ -221,7 +221,7 @@ class Not implements Expression{
     @Override
     public Value evaluate(Memory mem) throws Exception {
         Boolean l = this.expr.evaluate(mem).getBool();
-        return new Value(!l.booleanValue());
+        return Value.value(!l.booleanValue());
     }
 }
 class ApplyFunction implements Expression{
