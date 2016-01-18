@@ -6,20 +6,19 @@ package com.ELang;
 public class TokenStream {
     private String source;
     private int index;
-
     public TokenStream(String sourceCode){
         this.source = sourceCode;
         this.index = 0;
     }
 
+    private boolean hasSource(){
+        return this.index < this.source.length();
+    }
     /**
      * consume one character from the string if input matches
      * @param c character
      * @return true if input matches
      */
-    private boolean hasSource(){
-        return this.index < this.source.length();
-    }
     private boolean getChar(char c){
         if (this.source.charAt(this.index) == c){
             ++this.index;
@@ -31,15 +30,14 @@ public class TokenStream {
     private char getChar(){
         return this.source.charAt(this.index++);
     }
+    private void backSpace(){
+        --this.index;
+    }
     /**
      * consume a word from the input string if input matches
      * @param s a word
      * @return true if input matches
      */
-    private void backSpace(){
-        --this.index;
-    }
-
     public boolean getWord(String s){
         for (int i = 0; i < s.length(); ++i){
             if (this.getChar(s.charAt(i)))
@@ -97,6 +95,34 @@ public class TokenStream {
             }
         }
         return result.length() == 0 ? null : result;
+    }
+    public String getString(){
+        int index = getCurrentState();
+        StringBuilder sb = new StringBuilder();
+        try {
+            if (getChar('\n')) {
+                while (true) {
+                    char c = getChar();
+                    if (c != '\n')
+                        sb.append(c);
+                    else {
+                        return sb.toString();
+                    }
+                }
+            }
+        }catch(StringIndexOutOfBoundsException e){
+            // fail
+        }finally {
+            restoreState(index);
+            return null;
+        }
+    }
+
+    public int getCurrentState(){
+        return this.index;
+    }
+    public void restoreState(int i){
+        this.index = i;
     }
     /**
      * return the remaining source code

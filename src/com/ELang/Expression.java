@@ -215,7 +215,7 @@ class Or implements Expression{
 
 class Not implements Expression{
     private Expression expr;
-    public Not(Expression left, Expression right){
+    public Not(Expression left){
         this.expr = left;
     }
     @Override
