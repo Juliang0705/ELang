@@ -39,13 +39,19 @@ public class TokenStream {
      * @return true if input matches
      */
     public boolean getWord(String s){
-        for (int i = 0; i < s.length(); ++i){
-            if (this.getChar(s.charAt(i)))
-                continue;
-            else{
-                this.index -= i;
-                return false;
+        int currentIndex = getCurrentState();
+        try {
+            for (int i = 0; i < s.length(); ++i) {
+                if (this.getChar(s.charAt(i)))
+                    continue;
+                else {
+                    this.index -= i;
+                    return false;
+                }
             }
+        }catch (Exception e){
+            restoreState(currentIndex);
+            return false;
         }
         return true;
     }
@@ -100,22 +106,19 @@ public class TokenStream {
         int index = getCurrentState();
         StringBuilder sb = new StringBuilder();
         try {
-            if (getChar('\n')) {
+            if (getChar('\"')) {
                 while (true) {
                     char c = getChar();
-                    if (c != '\n')
+                    if (c != '\"')
                         sb.append(c);
                     else {
                         return sb.toString();
                     }
                 }
             }
-        }catch(StringIndexOutOfBoundsException e){
-            // fail
-        }finally {
-            restoreState(index);
-            return null;
-        }
+        }catch(StringIndexOutOfBoundsException e){}
+        restoreState(index);
+        return null;
     }
 
     public int getCurrentState(){

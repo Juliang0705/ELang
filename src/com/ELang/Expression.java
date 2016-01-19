@@ -18,6 +18,10 @@ class Literal implements Expression{
     public Value evaluate(Memory mem) throws Exception{
         return this.val;
     }
+    @Override
+    public String toString(){
+        return val.toString();
+    }
 }
 
 class Variable implements Expression{
@@ -28,6 +32,10 @@ class Variable implements Expression{
     @Override
     public Value evaluate(Memory mem) throws Exception{
         return mem.lookUp(this.varName);
+    }
+    @Override
+    public String toString(){
+        return varName;
     }
 }
 class ArrayElement implements Expression{
@@ -40,6 +48,10 @@ class ArrayElement implements Expression{
     @Override
     public Value evaluate(Memory mem) throws Exception {
         return this.arrayName.evaluate(mem).getArray()[this.pos.evaluate(mem).getNumber().intValue()];
+    }
+    @Override
+    public String toString(){
+        return arrayName + "[" + pos + "]";
     }
 }
 
@@ -55,6 +67,10 @@ class Plus implements Expression{
         Number r = this.right.evaluate(mem).getNumber();
         return Value.value(l.doubleValue() + r.doubleValue());
     }
+    @Override
+    public String toString(){
+        return "(" + left + "+" + right + ")";
+    }
 }
 
 class Minus implements Expression{
@@ -68,6 +84,10 @@ class Minus implements Expression{
         Number l = this.left.evaluate(mem).getNumber();
         Number r = this.right.evaluate(mem).getNumber();
         return Value.value(l.doubleValue() - r.doubleValue());
+    }
+    @Override
+    public String toString(){
+        return "(" + left + "-" + right + ")";
     }
 }
 
@@ -84,6 +104,10 @@ class Multiply implements Expression{
         Number r = this.right.evaluate(mem).getNumber();
         return Value.value(l.doubleValue() * r.doubleValue());
     }
+    @Override
+    public String toString(){
+        return "(" + left + "*" + right + ")";
+    }
 }
 
 
@@ -99,6 +123,10 @@ class Divide implements Expression{
         Number r = this.right.evaluate(mem).getNumber();
         return Value.value(l.doubleValue() / r.doubleValue());
     }
+    @Override
+    public String toString(){
+        return "(" + left + "/" + right + ")";
+    }
 }
 
 class Equal implements Expression{
@@ -112,6 +140,10 @@ class Equal implements Expression{
         Value l = this.left.evaluate(mem);
         Value r = this.right.evaluate(mem);
         return Value.value(l.equals(r));
+    }
+    @Override
+    public String toString(){
+        return "(" + left + "==" + right + ")";
     }
 }
 
@@ -127,6 +159,10 @@ class NotEqual implements Expression{
         Value r = this.right.evaluate(mem);
         return Value.value(!l.equals(r));
     }
+    @Override
+    public String toString(){
+        return "(" + left + "!=" + right + ")";
+    }
 }
 
 class Greater implements Expression{
@@ -140,6 +176,10 @@ class Greater implements Expression{
         Number l = this.left.evaluate(mem).getNumber();
         Number r = this.right.evaluate(mem).getNumber();
         return Value.value(l.doubleValue() > r.doubleValue());
+    }
+    @Override
+    public String toString(){
+        return "(" + left + ">" + right + ")";
     }
 }
 
@@ -155,6 +195,10 @@ class GreaterEqual implements Expression{
         Number r = this.right.evaluate(mem).getNumber();
         return Value.value(l.doubleValue() >= r.doubleValue());
     }
+    @Override
+    public String toString(){
+        return "(" + left + ">=" + right + ")";
+    }
 }
 
 class Less implements Expression{
@@ -168,6 +212,10 @@ class Less implements Expression{
         Number l = this.left.evaluate(mem).getNumber();
         Number r = this.right.evaluate(mem).getNumber();
         return Value.value(l.doubleValue() < r.doubleValue());
+    }
+    @Override
+    public String toString(){
+        return "(" + left + "<" + right + ")";
     }
 }
 
@@ -183,6 +231,10 @@ class LessEqual implements Expression{
         Number r = this.right.evaluate(mem).getNumber();
         return Value.value(l.doubleValue() <= r.doubleValue());
     }
+    @Override
+    public String toString(){
+        return "(" + left + "<=" + right + ")";
+    }
 }
 
 class And implements Expression{
@@ -196,6 +248,10 @@ class And implements Expression{
         Boolean l = this.left.evaluate(mem).getBool();
         Boolean r = this.right.evaluate(mem).getBool();
         return Value.value(l.booleanValue() && r.booleanValue());
+    }
+    @Override
+    public String toString(){
+        return "(" + left + "&&" + right + ")";
     }
 }
 
@@ -211,6 +267,10 @@ class Or implements Expression{
         Boolean r = this.right.evaluate(mem).getBool();
         return Value.value(l.booleanValue() || r.booleanValue());
     }
+    @Override
+    public String toString(){
+        return "(" + left + "||" + right + ")";
+    }
 }
 
 class Not implements Expression{
@@ -222,6 +282,10 @@ class Not implements Expression{
     public Value evaluate(Memory mem) throws Exception {
         Boolean l = this.expr.evaluate(mem).getBool();
         return Value.value(!l.booleanValue());
+    }
+    @Override
+    public String toString(){
+        return "!" + expr;
     }
 }
 class ApplyFunction implements Expression{
@@ -239,5 +303,19 @@ class ApplyFunction implements Expression{
                 valueList.add(e.evaluate(mem));
         }
         return mem.getFunction(this.name).apply(valueList);
+    }
+    @Override
+    public String toString(){
+        StringBuilder result = new StringBuilder();
+        result.append(name);
+        result.append("(");
+        String postfix = "";
+        for (Expression e: args){
+            result.append(postfix);
+            result.append(e);
+            postfix = ",";
+        }
+        result.append(")");
+        return result.toString();
     }
 }
