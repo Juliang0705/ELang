@@ -20,6 +20,10 @@ class Assignment implements Statement{
     public void execute(Memory mem) throws Exception {
         mem.updateValue(this.name,this.expr.evaluate(mem));
     }
+    @Override
+    public String toString() {
+        return name + "=" + expr;
+    }
 }
 class ArrayAssign implements Statement{
     private Variable arrayName;
@@ -34,6 +38,10 @@ class ArrayAssign implements Statement{
     public void execute(Memory mem) throws Exception {
         this.arrayName.evaluate(mem).getArray()[this.pos.evaluate(mem).getNumber().intValue()] = this.value.evaluate(mem);
     }
+    @Override
+    public String toString() {
+        return arrayName + "[" + pos + "] = " + value;
+    }
 }
 class Empty implements Statement{
 
@@ -41,6 +49,10 @@ class Empty implements Statement{
     @Override
     public void execute(Memory mem) throws Exception {
         //.. just empty
+    }
+    @Override
+    public String toString() {
+        return "{ }";
     }
 }
 
@@ -59,6 +71,10 @@ class If implements Statement{
         else
             this.falseStmt.execute(mem);
     }
+    @Override
+    public String toString() {
+        return "if(" + cond + ")\n\t" + trueStmt + "\nelse" + falseStmt;
+    }
 }
 
 class While implements Statement{
@@ -72,6 +88,10 @@ class While implements Statement{
     public void execute(Memory mem) throws Exception {
         while (this.cond.evaluate(mem).getBool())
             this.stmt.execute(mem);
+    }
+    @Override
+    public String toString() {
+        return "while(" + cond + ")\n\t" + stmt;
     }
 }
 
@@ -87,6 +107,15 @@ class Block implements Statement{
             s.execute(mem);
         mem.popScope();
     }
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("{");
+        for (Statement s: stmts)
+            sb.append(s);
+        sb.append("}");
+        return sb.toString();
+    }
 }
 
 class Print implements Statement{
@@ -97,6 +126,10 @@ class Print implements Statement{
     @Override
     public void execute(Memory mem) throws Exception {
         System.out.print(this.expr.evaluate(mem));
+    }
+    @Override
+    public String toString() {
+        return "print " + expr;
     }
 }
 
@@ -109,6 +142,10 @@ class Println implements Statement{
     public void execute(Memory mem) throws Exception {
         System.out.println(this.expr.evaluate(mem));
     }
+    @Override
+    public String toString() {
+        return "println " + expr;
+    }
 }
 
 class Return implements Statement{
@@ -119,5 +156,9 @@ class Return implements Statement{
     @Override
     public void execute(Memory mem) throws Exception {
         mem.addReturnedValue(this.expr.evaluate(mem));
+    }
+    @Override
+    public String toString() {
+        return "return " + expr;
     }
 }

@@ -4,6 +4,9 @@ package com.ELang;
  * Created by Juliang on 1/17/16.
  */
 
+import com.sun.javafx.scene.control.skin.VirtualFlow;
+import com.sun.xml.internal.ws.api.message.ExceptionHasMessage;
+
 import java.util.*;
 
 /**
@@ -12,13 +15,160 @@ import java.util.*;
  * Parenthesis > Literal >= Variable >= ArrayElement >= ApplyFunction > Not > Multiply
  * >= Divide > plus >= Minus > Comparisons > And > Or
  */
-//to do: ignore space
 public class Parser {
     private TokenStream ts;
     public Parser(TokenStream source){
         this.ts = source;
     }
 
+    //functions for parsing statement
+    public Statement parseStatement() throws Exception{
+        Statement result = parseAssignment();
+        if (result == null){
+            result = parseArrayAssign();
+            if (result == null){
+                result = parseIf();
+                if (result == null){
+                    result = parseWhile();
+                    if (result == null){
+                        result = parsePrint();
+                        if (result == null){
+                            result = parsePrintln();
+                            if (result == null){
+                                result = parseReturn();
+                                if (result == null) {
+                                    result = parseBlock();
+                                    if (result == null) {
+                                        throw new Exception("Statement Parsing Error");
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return result;
+    }
+    private Statement parseAssignment() throws Exception{
+        int currentIndex = this.ts.getCurrentState();
+        String name = this.ts.getIdentifier();
+        if (name != null){
+            if (this.ts.getWord("=")){
+                Expression expr = parseExpression();
+                if (this.ts.hasRemovedSpaceAndNewLine())
+                    return new Assignment(name,expr);
+            }
+        }
+        this.ts.restoreState(currentIndex);
+        return null;
+    }
+    private Statement parseArrayAssign() throws Exception{
+        int currentIndex = this.ts.getCurrentState();
+        String name = this.ts.getIdentifier();
+        if (name != null){
+            if (this.ts.getWord("[")){
+                Expression position = parseExpression();
+                if (this.ts.getWord("]") && this.ts.getWord("=")){
+                    Expression expr = parseExpression();
+                    if (this.ts.hasRemovedSpaceAndNewLine())
+                        return new ArrayAssign(name,position,expr);
+                }
+            }
+        }
+        this.ts.restoreState(currentIndex);
+        return null;
+    }
+
+    private Statement parseIf() throws Exception{
+        int currentIndex = this.ts.getCurrentState();
+        if (this.ts.getWord("if")){
+            if (this.ts.getWord("(")) {
+                Expression condition = parseExpression();
+                if (this.ts.getWord(")")) {
+                    Statement trueStat = parseStatement();
+                    if (this.ts.getWord("else if")) {
+                        for (int i = 0; i < 3; ++i) this.ts.backSpace();
+                        Statement falseStat = parseStatement();
+                        return new If(condition, trueStat, falseStat);
+                    } else if (this.ts.getWord("else") && this.ts.hasRemovedSpaceAndNewLine()) {
+                            Statement falseStat = parseStatement();
+                        return new If(condition, trueStat, falseStat);
+                        }
+                    else {
+                        return new If(condition, trueStat, new Empty());
+                    }
+                }
+            }
+        }
+        this.ts.restoreState(currentIndex);
+        return null;
+    }
+    private Statement parseWhile() throws Exception{
+        int currentIndex = this.ts.getCurrentState();
+        if (this.ts.getWord("while")){
+            if(this.ts.getWord("(")) {
+                Expression condition = parseExpression();
+                if (this.ts.getWord(")")){
+                    Statement stat = parseStatement();
+                    return new While(condition,stat);
+                }
+            }
+        }
+        this.ts.restoreState(currentIndex);
+        return null;
+    }
+    private Statement parseBlock() throws Exception{
+        int currentIndex = this.ts.getCurrentState();
+        if (this.ts.getWord("{")){
+            List<Statement> statementList = new ArrayList<>();
+            Statement stat = parseStatement();
+            while (stat != null){
+                statementList.add(stat);
+                stat = parseStatement();
+            }
+            if (this.ts.getWord("}")){
+                return new Block(statementList);
+            }
+        }
+        this.ts.restoreState(currentIndex);
+        return null;
+    }
+
+    private Statement parsePrint() throws Exception{
+        int currentIndex = this.ts.getCurrentState();
+        if (this.ts.getWord("print") && this.ts.hasRemovedSpaceAndNewLine()){
+            Expression expr = parseExpression();
+            if (this.ts.hasRemovedSpaceAndNewLine()){
+                return new Print(expr);
+            }
+        }
+        this.ts.restoreState(currentIndex);
+        return null;
+    }
+    private Statement parsePrintln() throws Exception{
+        int currentIndex = this.ts.getCurrentState();
+        if (this.ts.getWord("println") && this.ts.hasRemovedSpaceAndNewLine()){
+            Expression expr = parseExpression();
+            if (this.ts.hasRemovedSpaceAndNewLine()){
+                return new Println(expr);
+            }
+        }
+        this.ts.restoreState(currentIndex);
+        return null;
+    }
+
+    private Statement parseReturn() throws Exception{
+        int currentIndex = this.ts.getCurrentState();
+        if (this.ts.getWord("return") && this.ts.hasRemovedSpaceAndNewLine()){
+            Expression expr = parseExpression();
+            if (this.ts.hasRemovedSpaceAndNewLine()){
+                return new Return(expr);
+            }
+        }
+        this.ts.restoreState(currentIndex);
+        return null;
+    }
     //functions for parsing expression
     public Expression parseExpression() throws Exception{
         return parseOr();
@@ -163,7 +313,10 @@ public class Parser {
             return new Literal(Value.value(true));
         }else if (this.ts.getWord("false")){
             return new Literal(Value.value(false));
-        }else{
+        }else if (this.ts.getWord("none")){
+            return new Literal((Value.value(null)));
+        }
+        else{
             Number n = this.ts.getNumber();
             if (n != null){
                 return new Literal(Value.value(n));

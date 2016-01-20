@@ -14,6 +14,26 @@ public class TokenStream {
     private boolean hasSource(){
         return this.index < this.source.length();
     }
+    private void removeSpace(){
+        while (hasSource()){
+            char peek = this.source.charAt(this.index);
+            if (peek == ' ' || peek == '\t')
+                ++this.index;
+            else
+                break;
+        }
+    }
+    public boolean hasRemovedSpaceAndNewLine(){
+        int oldIndex = this.index;
+        while (hasSource()){
+            char peek = this.source.charAt(this.index);
+            if (peek == ' ' || peek == '\t'||peek == '\n')
+                ++this.index;
+            else
+                break;
+        }
+        return oldIndex != this.index;
+    }
     /**
      * consume one character from the string if input matches
      * @param c character
@@ -30,7 +50,7 @@ public class TokenStream {
     private char getChar(){
         return this.source.charAt(this.index++);
     }
-    private void backSpace(){
+    public void backSpace(){
         --this.index;
     }
     /**
@@ -39,6 +59,7 @@ public class TokenStream {
      * @return true if input matches
      */
     public boolean getWord(String s){
+        removeSpace();
         int currentIndex = getCurrentState();
         try {
             for (int i = 0; i < s.length(); ++i) {
@@ -56,6 +77,7 @@ public class TokenStream {
         return true;
     }
     public Number getNumber(){
+        removeSpace();
         String result = "";
         int count = 0;
         for (; hasSource(); ++count){
@@ -87,6 +109,7 @@ public class TokenStream {
     }
 
     public String getIdentifier(){
+        removeSpace();
         String result = "";
         int count = 0;
         for (; hasSource(); ++count){
@@ -103,6 +126,7 @@ public class TokenStream {
         return result.length() == 0 ? null : result;
     }
     public String getString(){
+        removeSpace();
         int index = getCurrentState();
         StringBuilder sb = new StringBuilder();
         try {

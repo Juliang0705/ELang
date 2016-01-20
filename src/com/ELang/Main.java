@@ -30,8 +30,8 @@ public class Main {
                     new Println(new ApplyFunction("toInt",Arrays.asList(new Variable("arr"))))
                          ));
             prog.execute(mem);*/
-            Parser p = new Parser(new TokenStream("3+ahcd==4+5/3*5-3"));
-            System.out.println(p.parseExpression());
+            Parser p = new Parser(new TokenStream("println \"hello World\"\n"));
+            System.out.println(p.parseStatement());
         }catch (Exception err){
             System.out.println(err);
         }
