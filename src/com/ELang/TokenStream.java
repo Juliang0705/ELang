@@ -14,7 +14,8 @@ public class TokenStream {
     private boolean hasSource(){
         return this.index < this.source.length();
     }
-    private void removeSpace(){
+    public boolean hasRemovedSpace(){
+        int oldIndex = this.index;
         while (hasSource()){
             char peek = this.source.charAt(this.index);
             if (peek == ' ' || peek == '\t')
@@ -22,12 +23,24 @@ public class TokenStream {
             else
                 break;
         }
+        return oldIndex != this.index;
     }
     public boolean hasRemovedSpaceAndNewLine(){
         int oldIndex = this.index;
         while (hasSource()){
             char peek = this.source.charAt(this.index);
             if (peek == ' ' || peek == '\t'||peek == '\n')
+                ++this.index;
+            else
+                break;
+        }
+        return oldIndex != this.index;
+    }
+    public boolean hasRemovedNewLine(){
+        int oldIndex = this.index;
+        while (hasSource()){
+            char peek = this.source.charAt(this.index);
+            if (peek == '\n')
                 ++this.index;
             else
                 break;
@@ -59,7 +72,7 @@ public class TokenStream {
      * @return true if input matches
      */
     public boolean getWord(String s){
-        removeSpace();
+        hasRemovedSpace();
         int currentIndex = getCurrentState();
         try {
             for (int i = 0; i < s.length(); ++i) {
@@ -77,7 +90,7 @@ public class TokenStream {
         return true;
     }
     public Number getNumber(){
-        removeSpace();
+        hasRemovedSpace();
         String result = "";
         int count = 0;
         for (; hasSource(); ++count){
@@ -109,7 +122,7 @@ public class TokenStream {
     }
 
     public String getIdentifier(){
-        removeSpace();
+        hasRemovedSpace();
         String result = "";
         int count = 0;
         for (; hasSource(); ++count){
@@ -126,7 +139,7 @@ public class TokenStream {
         return result.length() == 0 ? null : result;
     }
     public String getString(){
-        removeSpace();
+        hasRemovedSpace();
         int index = getCurrentState();
         StringBuilder sb = new StringBuilder();
         try {
@@ -144,7 +157,9 @@ public class TokenStream {
         restoreState(index);
         return null;
     }
-
+    public char peak(){
+        return this.source.charAt(this.index);
+    }
     public int getCurrentState(){
         return this.index;
     }

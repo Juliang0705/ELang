@@ -73,7 +73,7 @@ class If implements Statement{
     }
     @Override
     public String toString() {
-        return "if(" + cond + ")\n\t" + trueStmt + "\nelse" + falseStmt;
+        return "if(" + cond + ")\n\t" + trueStmt + "\nelse\n\t" + falseStmt;
     }
 }
 
@@ -110,10 +110,10 @@ class Block implements Statement{
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("{");
+        sb.append("{\n");
         for (Statement s: stmts)
-            sb.append(s);
-        sb.append("}");
+            sb.append(s+"\n");
+        sb.append("\n}");
         return sb.toString();
     }
 }

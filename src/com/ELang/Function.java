@@ -49,4 +49,20 @@ class Function implements Callable{
     public void execute(Memory mem) throws Exception {
         mem.addFunction(this);
     }
+    @Override
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+        sb.append("def " + name + "(");
+        char posfix = ' ';
+        for (String s: variables) {
+            sb.append(posfix);
+            sb.append(s);
+            posfix = ',';
+        }
+        sb.append("){\n");
+        for (Statement s: stmts)
+            sb.append(s);
+        sb.append("\n}");
+        return sb.toString();
+    }
 }
