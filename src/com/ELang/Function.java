@@ -42,7 +42,7 @@ class Function implements Callable{
         if (this.mem.hasReturnedValue())
             return this.mem.getReturnedValue();
         else
-            throw new Exception("Function \""  + this.name +"\" may not return.");
+            return Value.value(null);
     }
 
     @Override

@@ -65,7 +65,10 @@ class Plus implements Expression{
     public Value evaluate(Memory mem) throws Exception {
         Number l = this.left.evaluate(mem).getNumber();
         Number r = this.right.evaluate(mem).getNumber();
-        return Value.value(l.doubleValue() + r.doubleValue());
+        if (l.intValue() == l.doubleValue() && r.intValue() == r.doubleValue()){
+            return Value.value(l.intValue() + r.intValue());
+        }else
+            return Value.value(l.doubleValue() + r.doubleValue());
     }
     @Override
     public String toString(){
@@ -83,7 +86,10 @@ class Minus implements Expression{
     public Value evaluate(Memory mem) throws Exception {
         Number l = this.left.evaluate(mem).getNumber();
         Number r = this.right.evaluate(mem).getNumber();
-        return Value.value(l.doubleValue() - r.doubleValue());
+        if (l.intValue() == l.doubleValue() && r.intValue() == r.doubleValue()){
+            return Value.value(l.intValue() - r.intValue());
+        }else
+            return Value.value(l.doubleValue() - r.doubleValue());
     }
     @Override
     public String toString(){
@@ -102,7 +108,10 @@ class Multiply implements Expression{
     public Value evaluate(Memory mem) throws Exception {
         Number l = this.left.evaluate(mem).getNumber();
         Number r = this.right.evaluate(mem).getNumber();
-        return Value.value(l.doubleValue() * r.doubleValue());
+        if (l.intValue() == l.doubleValue() && r.intValue() == r.doubleValue()){
+            return Value.value(l.intValue() * r.intValue());
+        }else
+            return Value.value(l.doubleValue() * r.doubleValue());
     }
     @Override
     public String toString(){
@@ -121,7 +130,10 @@ class Divide implements Expression{
     public Value evaluate(Memory mem) throws Exception {
         Number l = this.left.evaluate(mem).getNumber();
         Number r = this.right.evaluate(mem).getNumber();
-        return Value.value(l.doubleValue() / r.doubleValue());
+        if (l.intValue() == l.doubleValue() && r.intValue() == r.doubleValue()){
+            return Value.value(l.intValue() / r.intValue());
+        }else
+            return Value.value(l.doubleValue() / r.doubleValue());
     }
     @Override
     public String toString(){
@@ -288,13 +300,15 @@ class Not implements Expression{
         return "!" + expr;
     }
 }
-class ApplyFunction implements Expression{
+class ApplyFunction implements Expression, Statement{
     private String name;
     private List<Expression> args;
     public ApplyFunction(String functionName, List<Expression> arguments){
         this.name = functionName;
         this.args = arguments;
     }
+
+
     @Override
     public Value evaluate(Memory mem) throws Exception {
         List<Value> valueList = new ArrayList<>();
@@ -317,5 +331,15 @@ class ApplyFunction implements Expression{
         }
         result.append(")");
         return result.toString();
+    }
+
+    @Override
+    public void execute(Memory mem) throws Exception {
+        List<Value> valueList = new ArrayList<>();
+        if (this.args != null) {
+            for (Expression e : this.args)
+                valueList.add(e.evaluate(mem));
+        }
+        mem.getFunction(this.name).apply(valueList);
     }
 }

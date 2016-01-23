@@ -53,12 +53,12 @@ public class Value {
                 if (val == null)
                     result +=("NONE,");
                 else
-                    result += (val.toString() + ",");
+                    result += (val.toString() + ", ");
             }
             if (result.length() == 1)
                 result += "]";
             else
-                result = result.substring(0,result.length()-1) + "]";
+                result = result.substring(0,result.length()-2) + "]";
             return result;
         }else if (this.type == ValueType.NONE){
             return "NONE";

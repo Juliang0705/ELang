@@ -5,6 +5,8 @@ package com.ELang;
  * Created by Juliang on 1/14/16.
  */
 
+import jdk.nashorn.internal.codegen.CompilerConstants;
+
 import java.io.*;
 import java.util.List;
 
@@ -42,7 +44,7 @@ class ToInt implements Callable{
     }
     @Override
     public String getName() {
-        return "toInt";
+        return "int";
     }
 
     @Override
@@ -60,7 +62,6 @@ class ToInt implements Callable{
                 return Value.value(array);
             default:
                 return convertToInt(oldValue);
-
         }
     }
     private Value convertToInt(Value v) throws Exception{
@@ -71,10 +72,54 @@ class ToInt implements Callable{
                 return Value.value(Integer.parseInt(v.getString()));
             case BOOL:
                 return Value.value(v.getBool() ? 1 : 0);
+            case NONE:
+                return Value.value(null);
             default:
-                throw new Exception("ToInt Failed: unsupported type" + v.getType());
+                throw new Exception("int Failed: unsupported type" + v.getType());
         }
     }
+    @Override
+    public void execute(Memory mem) throws Exception {
+        mem.addFunction(this);
+    }
+}
+
+class Len implements Callable{
+
+    @Override
+    public String getName() {
+        return "len";
+    }
+
+    @Override
+    public Value apply(List<Value> values) throws Exception {
+        if (values.size() != 1)
+            throw new Exception("Function \"" + this.getName() +"\" expects 1 argument. " +
+                    "Found " + values.size() + " argument(s).");
+         return Value.value(values.get(0).getArray().length);
+    }
+
+    @Override
+    public void execute(Memory mem) throws Exception {
+        mem.addFunction(this);
+    }
+}
+
+class Array implements Callable{
+
+    @Override
+    public String getName() {
+        return "array";
+    }
+
+    @Override
+    public Value apply(List<Value> values) throws Exception {
+        if (values.size() != 1)
+            throw new Exception("Function \"" + this.getName() +"\" expects 1 argument. " +
+                    "Found " + values.size() + " argument(s).");
+        return Value.array(values.get(0).getNumber().intValue());
+    }
+
     @Override
     public void execute(Memory mem) throws Exception {
         mem.addFunction(this);

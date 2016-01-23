@@ -13,9 +13,9 @@ public class Main {
     }
     public static void main(String[] args) {
         try {
-            new Block(Arrays.asList(new Input(),new ToInt())).execute(Memory.getInstance());
+            new Block(Arrays.asList(new Input(),new ToInt(),new Len(),new Array())).execute(Memory.getInstance());
             String program = readFile(args[0], StandardCharsets.UTF_8);
-            program = "{" + program + "}";
+            program = "{" + program + "\n}";
             TokenStream ts = new TokenStream(program);
             Parser p = new Parser(ts);
             Statement exe = p.parseStatement();

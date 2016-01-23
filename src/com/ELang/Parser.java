@@ -30,15 +30,18 @@ public class Parser {
                     if (result == null){
                         result = parsePrint();
                         if (result == null){
-                            result = parsePrintln();
+                            result = parseFunctionStatement();
                             if (result == null){
                                 result = parseReturn();
                                 if (result == null) {
                                     result = parseBlock();
                                     if (result == null) {
                                         result = parseFunctionDeclaration();
-                                        if (result == null)
-                                            return null;
+                                        if (result == null) {
+                                            result = parsePrintln();
+                                            if (result == null)
+                                                return null;
+                                        }
                                     }
                                 }
                             }
@@ -211,6 +214,25 @@ public class Parser {
         return null;
 
     }
+    private Statement parseFunctionStatement() throws Exception{
+        int currentIndex = this.ts.getCurrentState();
+        this.ts.hasRemovedSpaceAndNewLine();
+        String functionName = this.ts.getIdentifier();
+        if (this.ts.getWord("(")){
+            List<Expression> arguments = new ArrayList<>();
+            do{
+                try {
+                    Expression e = parseExpression();
+                    arguments.add(e);
+                }catch (Exception e){}
+            }while(this.ts.getWord(","));
+            if (this.ts.getWord(")") && this.ts.hasRemovedNewLine()){
+                return new ApplyFunction(functionName,arguments);
+            }
+        }
+        this.ts.restoreState(currentIndex);
+        return null;
+    }
     //functions for parsing expression
     public Expression parseExpression() throws Exception{
         return parseOr();
@@ -357,14 +379,14 @@ public class Parser {
             return new Literal(Value.value(false));
         }else if (this.ts.getWord("none")){
             return new Literal((Value.value(null)));
-        }else if (this.ts.getWord("array")){
+        }/*else if (this.ts.getWord("array")){
             if (this.ts.getWord("(")){
                 Number size = this.ts.getNumber();
                 if (size != null && this.ts.getWord(")")){
                     return new Literal(Value.array(size.intValue()));
                 }
             }
-        }
+        }*/
         else{
             Number n = this.ts.getNumber();
             if (n != null){
