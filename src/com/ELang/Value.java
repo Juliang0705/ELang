@@ -67,6 +67,30 @@ public class Value {
     }
     @Override
     public boolean equals(Object other){
-        return this.v.equals(other);
+        if (other instanceof Value){
+            Value otherValue = (Value) other;
+            if (this.type == otherValue.type){
+                switch (this.type){
+
+                    case NUMBER:
+                        return ((Number)v).equals((Number)otherValue.v);
+                    case STRING:
+                        return ((String)v).equals((String)otherValue.v);
+                    case BOOL:
+                        return ((Boolean)v).equals((Boolean)otherValue.v);
+                    case ARRAY:
+                       Value[] thisArray = (Value[]) this.v;
+                        Value[] otherArray = (Value[]) otherValue.v ;
+                        for (int i = 0; i< thisArray.length; ++i){
+                            if (!thisArray[i].equals(otherArray[i]))
+                                return false;
+                        }
+                        return true;
+                    case NONE:
+                        return true;
+                }
+            }
+        }
+        return false;
     }
 }

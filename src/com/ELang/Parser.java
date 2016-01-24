@@ -94,6 +94,7 @@ public class Parser {
                 Expression condition = parseExpression();
                 if (this.ts.getWord(")")) {
                     Statement trueStat = parseStatement();
+                    this.ts.hasRemovedSpaceAndNewLine();
                     if (this.ts.getWord("else if")) {
                         for (int i = 0; i < 3; ++i) this.ts.backSpace();
                         Statement falseStat = parseStatement();
@@ -136,6 +137,7 @@ public class Parser {
                 statementList.add(stat);
                 stat = parseStatement();
             }
+            this.ts.hasRemovedSpaceAndNewLine();
             if (this.ts.getWord("}")){
                 return new Block(statementList);
             }
@@ -161,7 +163,7 @@ public class Parser {
         this.ts.hasRemovedSpaceAndNewLine();
         if (this.ts.getWord("println") && this.ts.hasRemovedSpaceAndNewLine()){
             Expression expr = parseExpression();
-            if (this.ts.hasRemovedSpaceAndNewLine()){
+            if (this.ts.hasRemovedNewLine()){
                 return new Println(expr);
             }
         }
@@ -196,6 +198,7 @@ public class Parser {
                         arguments.add(paremeter);
                 }while(this.ts.getWord(",") && paremeter != null);
                 if (this.ts.getWord(")")){
+                    this.ts.hasRemovedSpaceAndNewLine();
                     if (this.ts.getWord("{")){
                         List<Statement> statementList = new ArrayList<>();
                         Statement stat = parseStatement();
@@ -203,6 +206,7 @@ public class Parser {
                             statementList.add(stat);
                             stat = parseStatement();
                         }
+                        this.ts.hasRemovedSpaceAndNewLine();
                         if (this.ts.getWord("}")){
                             return new Function(functionName,arguments,statementList,Memory.getInstance());
                         }

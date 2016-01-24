@@ -19,8 +19,9 @@ public class Main {
             TokenStream ts = new TokenStream(program);
             Parser p = new Parser(ts);
             Statement exe = p.parseStatement();
-            if (exe != null)
+            if (exe != null) {
                 exe.execute(Memory.getInstance());
+            }
             else
                 System.out.println("Statements cannot be parsed correctly");
         }catch (Exception err){
