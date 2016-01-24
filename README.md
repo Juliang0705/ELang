@@ -1,2 +1,2 @@
 # ELang
-a partially Emoji-based interpreted language
+an intepreted language that supports function and array
